@@ -20,56 +20,94 @@ public class StudentController : ControllerBase
     [HttpGet("GetAllStudent")]
     public async Task<IActionResult> GetAllStudent()
     {
-        var students = await _context.StudentOriginals.ToListAsync();
-        return Ok(students);
+        try
+        {
+            var students = await _context.StudentOriginals.ToListAsync();
+            return Ok(students);
+        }
+        catch
+        {
+            throw;
+        }
     }
     // Get student by Student ID
     [HttpGet("GetbyID")]
     public async Task<IActionResult> GetbyStudentID(string student_Id)
     {
-        var student = await _context.StudentOriginals.FindAsync(student_Id);
-        return Ok(student);
+        try
+        {
+            var student = await _context.StudentOriginals.FindAsync(student_Id);
+            return Ok(student);
+        }
+        catch
+        {
+            throw;
+        }
+        
     }
     //Insert student records
     [HttpPost("Create")]
     public async Task<IActionResult> InsertStudent([FromBody] StudentOriginal _student)
     {
-        var student = await _context.StudentOriginals.FindAsync(_student.StudentId);
-        if(student != null)
+        try
         {
-            _context.SaveChanges();
-            return Ok(false);
+            var student = await _context.StudentOriginals.FindAsync(_student.StudentId);
+            if(student != null)
+            {
+                _context.SaveChanges();
+                return Ok(false);
+            }
+            else
+            {
+                _context.StudentOriginals.Add(_student);
+                _context.SaveChanges();
+                return Ok(true);
+            }
         }
-        else
+        catch
         {
-            _context.StudentOriginals.Add(_student);
-            _context.SaveChanges();
-            return Ok(true);
+            throw;
         }
+        
     }
     //Delete Student records
     [HttpDelete("Delete")]
     public async Task<IActionResult> DeleteStudent(string student_Id)
     {
-        var student = await _context.StudentOriginals.FindAsync(student_Id);
-        if(student != null)
+        try
         {
-            _context.Remove(student);
-            _context.SaveChanges();
-            return Ok(true);
+            var student = await _context.StudentOriginals.FindAsync(student_Id);
+            if(student != null)
+            {
+                _context.Remove(student);
+                _context.SaveChanges();
+                return Ok(true);
+            }
+            else
+            {
+                return Ok(false);
+            }
         }
-        else
+        catch
         {
-            return Ok(false);
+            throw;
         }
+        
     }
     //Update the student record
     [HttpPatch("Update")]
     public async Task<IActionResult> UpdateStudent(String student_Id, [FromBody] StudentOriginal _student)
     {
-        _context.Update(_student);
-        await _context.SaveChangesAsync();
-        return Ok(_student);
+        try
+        {
+             _context.Update(_student);
+             await _context.SaveChangesAsync();
+            return Ok(_student);
+        }
+        catch{
+            throw;
+        }
+       
     }
 
 }
